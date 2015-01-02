@@ -55,3 +55,10 @@ function mix(color1, color2, w) {
     result = convertToHEX(arr).toUpperCase();
     return result;
 }
+
+function rgb(r, g, b) {
+    if( r<0 || r>255 || g<0 || g>255 || b<0 || b>255){ return; }
+    var arr = [r,g,b],
+        result = convertToHEX(arr).toUpperCase();
+    return result;
+}
