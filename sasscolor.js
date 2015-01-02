@@ -181,6 +181,7 @@ Color.prototype.adjust_hue = function(deg){
     var base = this.hsla().slice(0);
     base[0] += deg
     if(base[0]<0){base[0] += 360}
+    if(base[0]>360){base[0] -= 360}
     var rgb = this.hslToRGB(base)
     return {rgb: rgb,
             rgba:rgb.concat(base[3]),
@@ -188,9 +189,89 @@ Color.prototype.adjust_hue = function(deg){
             hsl:base.slice(0,3),
             hsla:base};
 }
+Color.prototype.complement = function(){
+    return this.adjust_hue(180)
+}
+Color.prototype.saturate = function(deg){
+    var base = this.hsla().slice(0);
+    base[1] += deg
+    if(base[1]<0){base[1] = 0}
+    if(base[1]>100){base[1] = 100}
+    var rgb = this.hslToRGB(base)
+    return {rgb: rgb,
+            rgba:rgb.concat(base[3]),
+            hex:this.rgbToHEX(rgb),
+            hsl:base.slice(0,3),
+            hsla:base};
+}
+Color.prototype.desaturate = function(deg){
+    var base = this.hsla().slice(0);
+    base[1] -= deg
+    if(base[1]<0){base[1] = 0}
+    if(base[1]>100){base[1] = 100}
+    var rgb = this.hslToRGB(base)
+    return {rgb: rgb,
+            rgba:rgb.concat(base[3]),
+            hex:this.rgbToHEX(rgb),
+            hsl:base.slice(0,3),
+            hsla:base};
+}
+Color.prototype.grayscale = function(){
+    return this.desaturate(100)
+}
+Color.prototype.lighten = function(deg){
+    var base = this.hsla().slice(0);
+    base[2] += deg
+    if(base[2]<0){base[2] = 0}
+    if(base[2]>100){base[2] = 100}
+    var rgb = this.hslToRGB(base)
+    return {rgb: rgb,
+            rgba:rgb.concat(base[3]),
+            hex:this.rgbToHEX(rgb),
+            hsl:base.slice(0,3),
+            hsla:base};
+}
+Color.prototype.darken = function(deg){
+    var base = this.hsla().slice(0);
+    base[2] -= deg
+    if(base[2]<0){base[2] = 0}
+    if(base[2]>100){base[2] = 100}
+    var rgb = this.hslToRGB(base)
+    return {rgb: rgb,
+            rgba:rgb.concat(base[3]),
+            hex:this.rgbToHEX(rgb),
+            hsl:base.slice(0,3),
+            hsla:base};
+}
+Color.prototype.alpha = function(){
+    return this.rgba()[3];
+}
+Color.prototype.opacity = function(){
+    return this.alpha();
+}
+Color.prototype.opacify = function(deg){
+    var a = this.alpha() + deg;
+    if(a>1){a = 1}
+    if(a<0){a = 0}
 
-var mycolor = new Color();
-mycolor.hsl(120, 30, 90);
-console.log(mycolor.adjust_hue(60))
-console.log(mycolor.adjust_hue(-140))
-console.log(mycolor.hsl())
+    return {
+        rgba: this.rgb().concat([a]),
+        hsla: this.hsl().concat([a])
+    };
+}
+Color.prototype.transparentize = function(deg){
+    var a = this.alpha() - deg;
+    if(a>1){a = 1}
+    if(a<0){a = 0}
+
+    return {
+        rgba: this.rgb().concat([a]),
+        hsla: this.hsl().concat([a])
+    };
+}
+Color.prototype.fade_in = function(deg){
+    return this.opacify(deg);
+}
+Color.prototype.fade_out = function(deg){
+    return this.transparentize(deg);
+}
