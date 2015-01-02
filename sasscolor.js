@@ -177,3 +177,20 @@ Color.prototype.invert = function(){
             hsl:this.rgbToHSL(inverted),
             hsla:this.rgbToHSL(inverted).concat([base[3]])};
 }
+Color.prototype.adjust_hue = function(deg){
+    var base = this.hsla().slice(0);
+    base[0] += deg
+    if(base[0]<0){base[0] += 360}
+    var rgb = this.hslToRGB(base)
+    return {rgb: rgb,
+            rgba:rgb.concat(base[3]),
+            hex:this.rgbToHEX(rgb),
+            hsl:base.slice(0,3),
+            hsla:base};
+}
+
+var mycolor = new Color();
+mycolor.hsl(120, 30, 90);
+console.log(mycolor.adjust_hue(60))
+console.log(mycolor.adjust_hue(-140))
+console.log(mycolor.hsl())
