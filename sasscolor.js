@@ -62,3 +62,15 @@ function rgb(r, g, b) {
         result = convertToHEX(arr).toUpperCase();
     return result;
 }
+
+function red(hex){
+    return toHEX(hex.substr(1,2)).toUpperCase();
+}
+
+function green(hex){
+    return toHEX(hex.substr(3,2)).toUpperCase();
+}
+
+function blue(hex){
+    return toHEX(hex.substr(3,2)).toUpperCase();
+}
