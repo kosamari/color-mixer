@@ -165,3 +165,15 @@ Color.prototype.saturation = function(){
 Color.prototype.lightness = function(){
     return this.hsl()[3];
 }
+Color.prototype.invert = function(){
+    var base = this.rgba()
+    var inverted = [];
+    for(var i = 0; i<3; i++){
+        inverted.push(255-base[i])
+    }
+    return {rgb:inverted,
+            rgba:inverted.concat([base[3]]),
+            hex:this.rgbToHEX(inverted),
+            hsl:this.rgbToHSL(inverted),
+            hsla:this.rgbToHSL(inverted).concat([base[3]])};
+}
