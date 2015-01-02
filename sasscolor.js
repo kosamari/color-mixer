@@ -70,15 +70,6 @@ function Color(opt){
 
 }
 
-Color.prototype.red = function(){
-    return this.hex.substr(1,2).toUpperCase();
-}
-Color.prototype.green = function(){
-    return this.hex.substr(3,2).toUpperCase();
-}
-Color.prototype.blue = function(){
-    return this.hex.substr(5,2).toUpperCase();
-}
 Color.prototype.rgbToHEX = function(arr){
     var color = '#';
     function d2h(d) {
@@ -92,7 +83,6 @@ Color.prototype.rgbToHEX = function(arr){
     color += d2h(arr[2]);
     return color;
 }
-
 Color.prototype.hexToRGB = function(str){
     var arr = [];
     function h2d(h) {
@@ -157,17 +147,21 @@ Color.prototype.hslToRGB = function(hsl){
     return [Math.round(r*255), Math.round(g*255), Math.round(b*255)];
 }
 
-
-var mycolor = new Color();
-mycolor.hex('#2d2dc8')
-
-var mycolor2 = new Color();
-mycolor2.rgba(234,34,32,0.3)
-
-var mycolor3 = new Color();
-mycolor3.mix(mycolor2,mycolor,90)
-
-console.log(mycolor.hsl())
-console.log(mycolor3.rgb())
-console.log(mycolor3.rgba())
-console.log(mycolor.hsl());
+Color.prototype.red = function(){
+    return this.hex().substr(1,2).toUpperCase();
+}
+Color.prototype.green = function(){
+    return this.hex().substr(3,2).toUpperCase();
+}
+Color.prototype.blue = function(){
+    return this.hex().substr(5,2).toUpperCase();
+}
+Color.prototype.hue = function(){
+    return this.hsl()[0];
+}
+Color.prototype.saturation = function(){
+    return this.hsl()[1];
+}
+Color.prototype.lightness = function(){
+    return this.hsl()[3];
+}
