@@ -7,51 +7,38 @@
 
     //  color object constructor
     var Color = c_c.Color = function(opt){
-        var rgbval,rgbaval,hexval,hslval,hslaval;
+        var rgbaval,hexval,hslaval;
 
         this.hex = function(str){
             if(arguments.length<=0){return hexval;}
             hexval = str.toUpperCase();
-            rgbval = hexToRGB(hexval);
-            rgbaval = rgbval.concat([1]);
-            hslval = rgbToHSL(rgbval);
-            hslaval = hslval.concat([1]);
+            rgbaval = hexToRGB(hexval);
+            hslaval = rgbToHSL(rgbaval);
         }
 
         this.rgb = function(r,g,b){
-            if(arguments.length<=0){return rgbval;}
-            rgbval = [r,g,b];
-            rgbaval = rgbval.concat([1]);
-            hexval = rgbToHEX(rgbval);
-            hslval = rgbToHSL(rgbval);
-            hslaval = hslval.concat([1]);
+            if(arguments.length<=0){return rgbaval.slice(0,3);}
+            this.rgba(r,g,b,1)
         }
 
         this.rgba = function(r,g,b,a){
             if(arguments.length<=0){return rgbaval;}
-            rgbval = [r,g,b];
-            rgbaval = rgbval.concat([a]);
-            hexval = rgbToHEX(rgbval);
-            hslval = rgbToHSL(rgbval);
-            hslaval = hslval.concat([a]);
+            rgbaval = [r,g,b,a];
+            hexval = rgbToHEX(rgbaval);
+            hslaval = rgbToHSL(rgbaval);
         }
 
         this.hsl = function(h,s,l){
-            if(arguments.length<=0){return hslval;}
-            hslval = [h,s,l];
-            hslaval = hslval.concat([1]);
-            rgbval = hslToRGB(hslval);
-            rgbaval = rgbval.concat([1]);
-            hexval = rgbToHEX(rgbval);
+            console.log(hslaval)
+            if(arguments.length<=0){return hslaval.slice(0,3);}
+            this.hsla(h,s,l,1)
         }
 
         this.hsla = function(h,s,l,a){
             if(arguments.length<=0){ return hslaval;}
-            hslval = [h,s,l];
-            hslaval = hslval.concat([a]);
-            rgbval = hslToRGB(hslval);
-            rgbaval = rgbval.concat([a]);
-            hexval= rgbToHEX(rgbval);
+            hslaval = [h,s,l,a];
+            rgbaval = hslToRGB(hslaval);
+            hexval= rgbToHEX(rgbaval);
         }
 
         this.mix = function(color1, color2, w) {
@@ -63,19 +50,17 @@
                     return Math.floor(brend[i] + (c - brend[i]) * (weight / 100));
                 });
 
-            rgbval = newcolor.slice(0,3);
             rgbaval = newcolor;
-            hexval = rgbToHEX(rgbval);
-            hslval = rgbToHSL(rgbval);
-            hslaval = hslval.concat([rgbaval[3]]);
+            hexval = rgbToHEX(rgbaval);
+            hslaval = rgbToHSL(rgbaval);
         }
 
         this.values = function(){
-            return {rgb: rgbval,
-                rgba: rgbaval,
-                hex: hexval,
-                hsl: hslval,
-                hsla: hslaval};
+            return {rgb: this.rgb(),
+                rgba: this.rgba(),
+                hex: this.hex(),
+                hsl: this.hsl(),
+                hsla: this.hsla()};
         }
     }
 
@@ -228,10 +213,9 @@
         return this.transparentize(color,deg);
     }
 
-
     // Conversion Functions
-    function rgbToHEX(rgb){
-        if(rgb.length>3){rgb = rgb.slice(0,3)}
+    function rgbToHEX(rgba){
+        var rgb = rgba.slice(0,3);
 
         function d2h(d) {
             var hex = d.toString(16);
@@ -252,14 +236,14 @@
         return [
             h2d(hex.substr(1,2)),
             h2d(hex.substr(3,2)),
-            h2d(hex.substr(5,2))
-        ];
+            h2d(hex.substr(5,2)),
+        ].concat([a]);
     }
 
-    function rgbToHSL(rgb){
-        var r = rgb[0] / 255,
-            g = rgb[1] / 255,
-            b = rgb[2] / 255,
+    function rgbToHSL(rgba){
+        var r = rgba[0] / 255,
+            g = rgba[1] / 255,
+            b = rgba[2] / 255,
             max = Math.max(r,g,b),
             min = Math.min(r,g,b),
             h,
@@ -276,16 +260,16 @@
             s = l < 0.5 ? d / (max + min) : d / (2 - max - min) ;
             h = huecalc[String(max)]();
         }
-        return [Math.round(h), Math.round(s*100), Math.round(l*100)];
+        return [Math.round(h), Math.round(s*100), Math.round(l*100)].concat([rgba[3]]);
     }
 
-    function hslToRGB(hsl){
+    function hslToRGB(hsla){
         var r,
             g,
             b,
-            h = hsl[0] / 360,
-            s = hsl[1] / 100,
-            l = hsl[2] / 100;
+            h = hsla[0] / 360,
+            s = hsla[1] / 100,
+            l = hsla[2] / 100;
 
         function hue2rgb(p, q, t) {
             if(t < 0) t += 1;
@@ -300,11 +284,12 @@
             r = g = b = l; // grayscaled color
         }else{
             var q = l < 0.5 ? l * (1 + s) : l + s - l * s,
-                p = 2 * l - q;
+                p = 2 * l - q
             r = hue2rgb(p, q, h + 1/3),
             g = hue2rgb(p, q, h),
             b = hue2rgb(p, q, h - 1/3);
         }
-        return [r,g,b].map(function(c){return Math.round(c*255)});
+        return [r,g,b].map(function(c){return Math.round(c*255)}).concat([hsla[3]]);
     }
+
 }();
