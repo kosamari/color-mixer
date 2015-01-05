@@ -233,6 +233,24 @@
                 hsla: this.hsla(),
                 name: name};
         }
+
+        this.set = function(opt){
+            var options = {
+                hex: function(arg){this.hex.call(this,arg)},
+                rgb: function(arg){this.rgb.apply(this,arg)},
+                rgba: function(arg){this.rgba.apply(this,arg)},
+                hsl: function(arg){this.hsl.apply(this,arg)},
+                hsla: function(arg){this.hsla.apply(this,arg)},
+                mix: function(arg){this.mix.apply(this,arg)},
+                name: function(arg){this.name.call(this,arg)}
+            }
+            var key = getKeys(opt)[0];
+            options[key].call(this,opt[key]);
+        }
+
+        if(opt){
+            this.set(opt)
+        }
     };
 
     // color manipulation methods
