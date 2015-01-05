@@ -253,6 +253,15 @@
         }
     };
 
+
+    // color viewing helper for browser console
+    c_c.print = function (color){
+        if(typeof window === 'undefined'){return console.log(color.hex()); }
+        var bg = color.hex(),
+            fg = this.complement(color);
+        console.log('%c     '+bg+'     ','background:'+bg+'; color: '+fg )
+    }
+
     // color manipulation methods
     // 'color' is an each instance of Color.
 
@@ -380,7 +389,7 @@
     }
 
     c_c.complement = function(color){
-        return color.adjust_hue(180)
+        return this.adjust_hue(color,180)
     }
 
     // SATURATION
