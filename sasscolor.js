@@ -258,8 +258,9 @@
     c_c.print = function (color){
         if(typeof window === 'undefined'){return console.log(color.hex()); }
         var bg = color.hex(),
-            fg = this.complement(color);
-        console.log('%c     '+bg+'     ','background:'+bg+'; color: '+fg )
+            fg = this.complement(color).hex;
+        console.log('%c  ','background:'+bg+'; font-size:40px;');
+        return color.values();
     }
 
     // color manipulation methods
