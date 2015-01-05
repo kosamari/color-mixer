@@ -1,8 +1,16 @@
 !function() {
-    var c_c = {
-        version: '0.0.1'
-    };
-    this.c_c = c_c;
+    var c_c = {};
+
+    c_c.VERSION = '0.0.1'
+
+    if (typeof exports !== 'undefined') {
+        if (typeof module !== 'undefined' && module.exports) {
+            exports = module.exports = c_c;
+        }
+        exports.c_c = c_c;
+    } else {
+        this.c_c = c_c;
+    }
 
     var colorDict = {
           'aqua': '#00ffff',
