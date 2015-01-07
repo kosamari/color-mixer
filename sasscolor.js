@@ -173,6 +173,7 @@
             rgbaval = hexToRGB(hexval);
             hslaval = rgbToHSL(rgbaval);
             name = hexToName(hexval);
+            updateSubs.call(this);
         }
 
         this.rgb = function(r,g,b){
@@ -186,6 +187,7 @@
             hexval = rgbToHEX(rgbaval);
             hslaval = rgbToHSL(rgbaval);
             name = hexToName(hexval);
+            updateSubs.call(this);
         }
 
         this.hsl = function(h,s,l){
@@ -199,6 +201,7 @@
             rgbaval = hslToRGB(hslaval);
             hexval= rgbToHEX(rgbaval);
             name = hexToName(hexval);
+            updateSubs.call(this);
         }
 
         this.mix = function(color1, color2, w) {
@@ -214,6 +217,7 @@
             hexval = rgbToHEX(rgbaval);
             hslaval = rgbToHSL(rgbaval);
             name = hexToName(hexval);
+            updateSubs.call(this);
         }
 
         this.name = function(str) {
@@ -223,6 +227,7 @@
             rgbaval = hexToRGB(hexval);
             hslaval = rgbToHSL(rgbaval);
             name = hexToName(hexval);
+            updateSubs.call(this);
         }
 
         this.values = function(){
@@ -248,11 +253,21 @@
             options[key].call(this,opt[key]);
         }
 
+        this.subcolors=[];
+
         if(opt){
             this.set(opt)
         }
     };
 
+    var SubColor = function(p,f){
+        this.parent = p
+        this.set(f.call(this.parent))
+        this.update = function(){
+            this.set(f.call(this.parent))
+        }
+    };
+    SubColor.prototype = new Color();
 
     // color viewing helper for browser console
     c_c.print = function (color){
@@ -261,7 +276,7 @@
         if(color.values){
             bg = color.hex();
             data = color.values();
-            fg = c_c.lightness(color)>50?'#000000' :'#ffffff' ;
+            fg = color.hsl()[2]>50?'#000000' :'#ffffff' ;
         }else{
             bg = color.hex;
             data = color;
@@ -272,321 +287,356 @@
         return data;
     }
 
-    // color manipulation methods
-    // 'color' is an each instance of Color.
+    Color.prototype = {
+        red: function(){
+           return this.hex().substr(1,2);
+        },
+        green: function(){
+            return this.hex().substr(3,2);
+        },
+        blue: function(){
+            return this.hex().substr(5,2);
+        },
+        hue: function(){
+            return this.hsl()[0];
+        },
+        saturation: function(){
+            return this.hsl()[1];
+        },
+        lightness: function(){
+            return this.hsl()[2];
+        },
+        alpha: function(){
+            return this.rgba()[3];
+        },
+        opacity: function(){
+            return this.alpha();
+        },
+        addSubColor: function(op){
+            var sub = new SubColor(this,op)
+            this.subcolors.push(sub)
+        },
+        invert: function(save){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.invert(false)})
+            }
+            var inverted = this.rgba().map(function(c,i){
+                if(i === 3) { return c; }
+                return 255 - c;
+            });
+            return {rgb: inverted.slice(0,3),
+                    rgba: inverted,
+                    hex: rgbToHEX(inverted),
+                    hsl: rgbToHSL(inverted),
+                    hsla: rgbToHSL(inverted).concat([inverted[3]])}
+        },
+        adjust_red: function(save,deg,scale){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.adjust_red(false,deg,scale)})
+            }
+            var hsla,
+                rgba = this.rgba().slice(0);
 
-    // value getters
-    c_c.red = function(color){
-        return color.hex().substr(1,2);
-    }
+            if(deg){
+                rgba[0] = Math.max(Math.min(rgba[0] + deg, 255),0);
+            }else{
+                scale>=0
+                ? rgba[0] = Math.floor((255-rgba[0])*scale/100+rgba[0])
+                : rgba[0] = Math.floor(rgba[0]*Math.abs(scale)/100)
+            }
 
-    c_c.green = function(color){
-        return color.hex().substr(3,2);
-    }
+            hsla = rgbToHSL(rgba);
+            return {rgb: rgba.slice(0,3),
+                    rgba: rgba,
+                    hex: rgbToHEX(rgba),
+                    hsl: hsla.slice(0,3),
+                    hsla: hsla};
+        },
+        adjust_green: function(save,deg,scale){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.adjust_green(false,deg,scale)})
+            }
+            var hsla,
+                rgba = this.rgba().slice(0);
 
-    c_c.blue = function(color){
-        return color.hex().substr(5,2);
-    }
+            if(deg){
+                rgba[1] = Math.max(Math.min(rgba[1] + deg, 255),0);
+            }else{
+                scale>=0
+                ? rgba[1] = Math.floor((255-rgba[1])*scale/100+rgba[1])
+                : rgba[1] = Math.floor(rgba[1]*Math.abs(scale)/100)
+            }
 
-    c_c.hue = function(color){
-        return color.hsl()[0];
-    }
+            hsla = rgbToHSL(rgba);
+            return {rgb: rgba.slice(0,3),
+                    rgba: rgba,
+                    hex: rgbToHEX(rgba),
+                    hsl: hsla.slice(0,3),
+                    hsla: hsla};
+        },
+        adjust_blue: function(save,deg,scale){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.adjust_blue(false,deg,scale)})
+            }
+            var hsla,
+                rgba = this.rgba().slice(0);
 
-    c_c.saturation = function(color){
-        return color.hsl()[1];
-    }
+            if(deg){
+                rgba[2] = Math.max(Math.min(rgba[2] + deg, 255),0);
+            }else{
+                scale>=0
+                ? rgba[2] = Math.floor((255-rgba[2])*scale/100+rgba[2])
+                : rgba[2] = Math.floor(rgba[2]*Math.abs(scale)/100)
+            }
 
-    c_c.lightness = function(color){
-        return color.hsl()[2];
-    }
+            hsla = rgbToHSL(rgba);
+            return {rgb: rgba.slice(0,3),
+                    rgba: rgba,
+                    hex: rgbToHEX(rgba),
+                    hsl: hsla.slice(0,3),
+                    hsla: hsla};
+        },
+        adjust_hue: function(save,deg){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.adjust_hue(false,deg)})
+            }
+            var rgb,
+                hsla = this.hsla().slice(0),
+                diff = 360 - (hsla[0]+deg);
 
-    c_c.alpha = function(color){
-        return color.rgba()[3];
-    }
+            hsla[0] = diff > 360 ? 360 - (diff%360) : Math.abs(diff%360);
+            rgba = hslToRGB(hsla);
 
-    c_c.opacity = function(color){
-        return this.alpha(color);
-    }
+            return {rgb: rgba.slice(0,3),
+                    rgba: rgba,
+                    hex: rgbToHEX(rgba),
+                    hsl: hsla.slice(0,3),
+                    hsla: hsla};
+        },
+        adjust_saturation: function(save,deg,scale){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.adjust_saturation(false,deg,scale)})
+            }
+            var rgb,
+                hsla = this.hsla().slice(0);
 
-    // RGB
-    c_c.invert = function(color){
-        var inverted = color.rgba().map(function(c,i){
-            if(i === 3) { return c; }
-            return 255 - c;
-        });
+            if(deg){
+                hsla[1] = Math.max(Math.min(hsla[1] + deg, 100),0);
+            }else{
+                scale>=0
+                ? hsla[1] = Math.floor((100-hsla[1])*scale/100+hsla[1])
+                : hsla[1] = Math.floor(hsla[1]*Math.abs(scale)/100)
+            }
 
-        return {rgb: inverted.slice(0,3),
-                rgba: inverted,
-                hex: rgbToHEX(inverted),
-                hsl: rgbToHSL(inverted),
-                hsla: rgbToHSL(inverted).concat([inverted[3]])};
-    }
+            rgba = hslToRGB(hsla);
 
-    c_c.adjust_red = function(color,deg,scale){
-        var hsla,
-            rgba = color.rgba().slice(0);
+            return {rgb: rgba.slice(0,3),
+                    rgba: rgba,
+                    hex: rgbToHEX(rgba),
+                    hsl: hsla.slice(0,3),
+                    hsla: hsla};
+        },
+        adjust_lightness: function(save,deg,scale){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.adjust_lightness(false,deg,scale)})
+            }
+            var rgb,
+                hsla = save.hsla().slice(0);
 
-        if(deg){
-            rgba[0] = Math.max(Math.min(rgba[0] + deg, 255),0);
-        }else{
-            scale>=0
-            ? rgba[0] = Math.floor((255-rgba[0])*scale/100+rgba[0])
-            : rgba[0] = Math.floor(rgba[0]*Math.abs(scale)/100)
-        }
+            if(deg){
+                hsla[2] = Math.max(Math.min(hsla[2] + deg, 100),0);
+            }else{
+                scale>=0
+                ? hsla[2] = Math.floor((100-hsla[2])*scale/100+hsla[2])
+                : hsla[2] = Math.floor(hsla[2]*Math.abs(scale)/100)
+            }
 
-        hsla = rgbToHSL(rgba);
-        return {rgb: rgba.slice(0,3),
+            rgba = hslToRGB(hsla);
+
+            return {rgb: rgba.slice(0,3),
+                    rgba: rgba,
+                    hex: rgbToHEX(rgba),
+                    hsl: hsla.slice(0,3),
+                    hsla: hsla};
+        },
+        adjust_alpha: function(save,deg,scale){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.adjust_alpha(false,deg,scale)})
+            }
+            var rgba = this.rgba().slice(0),
+                hsla = this.hsla().slice(0),
+                a;
+
+            if(deg){
+                a = Math.round(Math.max(Math.min(this.alpha(color) + deg, 1),0)*100)/100;
+            }else{
+                scale>=0
+                ? a = Math.floor((1-this.alpha(color))*scale+(this.alpha(color)*100))/100
+                : a = Math.floor(this.alpha(color)*Math.abs(scale))/100
+            }
+
+            rgba[3] = a;
+            hsla[3] = a
+            return {
                 rgba: rgba,
-                hex: rgbToHEX(rgba),
-                hsl: hsla.slice(0,3),
-                hsla: hsla};
-    }
+                hsla: hsla
+            };
+        },
+        complement: function(save){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.complement(false)})
+            }
+            return this.adjust_hue(false,180)
+        },
+        saturate: function(save,deg){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.saturate(false,deg)})
+            }
+            return this.adjust_saturation(false,deg)
+        },
+        desaturate: function(save,deg){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.desaturate(false,-deg)})
+            }
+            return this.adjust_saturation(false,-deg)
+        },
+        grayscale: function(save){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.grayscale(false,100)})
+            }
+            return this.adjust_saturation(false,100)
+        },
+        lighten: function(save,deg){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.lighten(false, deg)})
+            }
+            return this.adjust_lightness(false, deg)
+        },
+        darken: function(save,deg){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.darken(false, deg)})
+            }
+            return this.adjust_lightness(false, -deg)
+        },
+        opacify: function(save,deg){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.opacify(false,deg)})
+            }
+            return this.adjust_alpha(false,deg)
+        },
+        transparentize: function(save,deg){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.transparentize(false,deg)})
+            }
+            return this.adjust_alpha(false,-deg)
+        },
+        fade_in: function(save,deg){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.fade_in(false,deg)})
+            }
+            return this.adjust_alpha(false,deg)
+        },
+        fade_out: function(save,deg){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.fade_out(false,deg)})
+            }
+            return this.adjust_alpha(false,-deg)
+        },
+        adjust_color: function(save,opt){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.adjust_color(false,opt)})
+            }
+            var rgba = this.rgba().slice(0),
+                hsla = this.hsla().slice(0);
+            var operations = {
+                red: function(deg){rgba[0] = this.adjust_red(color,deg).rgba[0]},
+                green: function(deg){rgba[1] = this.adjust_green(color,deg).rgba[1]},
+                blue: function(deg){rgba[2] = this.adjust_blue(color,deg).rgba[2]},
+                hue: function(deg){hsla[0] = this.adjust_hue(color,deg).hsla[0]},
+                saturation: function(deg){hsla[1] = this.adjust_saturation(color,deg).hsla[1]},
+                lightoness: function(deg){hsla[2] = this.adjust_lightness(color,deg).hsla[2]},
+                alpha: function(deg){
+                        var a =  this.adjust_alpha(color,deg).hsla[3];
+                        rgba[3] = a;
+                        hsla[3] = a;
+                    }
+            }
 
-    c_c.adjust_green = function(color,deg,scale){
-        var hsla,
-            rgba = color.rgba().slice(0);
+            getKeys(opt).forEach(function(key){
+                operations[key].call(this,opt[key]);
+            },this);
 
-        if(deg){
-            rgba[1] = Math.max(Math.min(rgba[1] + deg, 255),0);
-        }else{
-            scale>=0
-            ? rgba[1] = Math.floor((255-rgba[1])*scale/100+rgba[1])
-            : rgba[1] = Math.floor(rgba[1]*Math.abs(scale)/100)
+            return {rgb: rgba.slice(0,3),
+                    rgba: rgba,
+                    hex: rgbToHEX(rgba),
+                    hsl: hsla.slice(0,3),
+                    hsla: hsla};
+        },
+        scale_color: function(save,opt){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.scale_color(false,opt)})
+            }
+            var rgba = this.rgba().slice(0),
+                hsla = this.hsla().slice(0);
+            var operations = {
+                red: function(scale){rgba[0] = this.adjust_red(color,null,scale).rgba[0]},
+                green: function(scale){rgba[1] = this.adjust_green(color,null,scale).rgba[1]},
+                blue: function(scale){rgba[2] = this.adjust_blue(color,null,scale).rgba[2]},
+                saturation: function(scale){hsla[1] = this.adjust_saturation(color,null,scale).hsla[1]},
+                lightness: function(scale){hsla[2] = this.adjust_lightness(color,null,scale).hsla[2]},
+                alpha: function(scale){
+                        var a =  this.adjust_alpha(color,null,scale).hsla[3];
+                        rgba[3] = a;
+                        hsla[3] = a;
+                    }
+            }
+
+            getKeys(opt).forEach(function(key){
+                operations[key].call(this,opt[key]);
+            },this);
+
+            return {rgb: rgba.slice(0,3),
+                    rgba: rgba,
+                    hex: rgbToHEX(rgba),
+                    hsl: hsla.slice(0,3),
+                    hsla: hsla};
+        },
+        change_color: function(save,opt){
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.change_color(false,opt)})
+            }
+            var rgba = this.rgba().slice(0),
+                hsla = this.hsla().slice(0);
+            var operations = {
+                red: function(val){rgba[0] = val},
+                green: function(val){rgba[1] = val},
+                blue: function(val){rgba[2] = val},
+                hue: function(val){hsla[0] = val},
+                saturation: function(val){hsla[1] = val},
+                lightness: function(val){hsla[2] = val},
+                alpha: function(val){
+                        rgba[3] = val;
+                        hsla[3] = val;
+                    }
+            }
+
+            Object.keys(opt).forEach(function(key){
+                operations[key].call(this,opt[key]);
+            },this);
+
+            return {rgb: rgba.slice(0,3),
+                    rgba: rgba,
+                    hex: rgbToHEX(rgba),
+                    hsl: hsla.slice(0,3),
+                    hsla: hsla};
         }
-
-        hsla = rgbToHSL(rgba);
-        return {rgb: rgba.slice(0,3),
-                rgba: rgba,
-                hex: rgbToHEX(rgba),
-                hsl: hsla.slice(0,3),
-                hsla: hsla};
     }
 
-    c_c.adjust_blue = function(color,deg,scale){
-        var hsla,
-            rgba = color.rgba().slice(0);
-
-        if(deg){
-            rgba[2] = Math.max(Math.min(rgba[2] + deg, 255),0);
-        }else{
-            scale>=0
-            ? rgba[2] = Math.floor((255-rgba[2])*scale/100+rgba[2])
-            : rgba[2] = Math.floor(rgba[2]*Math.abs(scale)/100)
-        }
-
-        hsla = rgbToHSL(rgba);
-        return {rgb: rgba.slice(0,3),
-                rgba: rgba,
-                hex: rgbToHEX(rgba),
-                hsl: hsla.slice(0,3),
-                hsla: hsla};
+    function updateSubs(){
+        this.subcolors.forEach(function(color){
+            color.update();
+        })
     }
-
-    // HUE
-    c_c.adjust_hue = function(color,deg){
-        var rgb,
-            hsla = color.hsla().slice(0),
-            diff = 360 - (hsla[0]+deg);
-
-        hsla[0] = diff > 360 ? 360 - (diff%360) : Math.abs(diff%360);
-        rgba = hslToRGB(hsla);
-
-        return {rgb: rgba.slice(0,3),
-                rgba: rgba,
-                hex: rgbToHEX(rgba),
-                hsl: hsla.slice(0,3),
-                hsla: hsla};
-    }
-
-    c_c.complement = function(color){
-        return this.adjust_hue(color,180)
-    }
-
-    // SATURATION
-    c_c.adjust_saturation = function(color,deg,scale){
-        var rgb,
-            hsla = color.hsla().slice(0);
-
-        if(deg){
-            hsla[1] = Math.max(Math.min(hsla[1] + deg, 100),0);
-        }else{
-            scale>=0
-            ? hsla[1] = Math.floor((100-hsla[1])*scale/100+hsla[1])
-            : hsla[1] = Math.floor(hsla[1]*Math.abs(scale)/100)
-        }
-
-        rgba = hslToRGB(hsla);
-
-        return {rgb: rgba.slice(0,3),
-                rgba: rgba,
-                hex: rgbToHEX(rgba),
-                hsl: hsla.slice(0,3),
-                hsla: hsla};
-    }
-
-    c_c.saturate = function(color,deg){
-        return this.adjust_saturation(color,deg)
-    }
-
-    c_c.desaturate = function(color,deg){
-        return this.adjust_saturation(color,-deg)
-    }
-
-    c_c.grayscale = function(color){
-        return this.adjust_saturation(color,100)
-    }
-
-    // LIGHTNESS
-     c_c.adjust_lightness = function(color,deg,scale){
-        var rgb,
-            hsla = color.hsla().slice(0);
-
-        if(deg){
-            hsla[2] = Math.max(Math.min(hsla[2] + deg, 100),0);
-        }else{
-            scale>=0
-            ? hsla[2] = Math.floor((100-hsla[2])*scale/100+hsla[2])
-            : hsla[2] = Math.floor(hsla[2]*Math.abs(scale)/100)
-        }
-
-        rgba = hslToRGB(hsla);
-
-        return {rgb: rgba.slice(0,3),
-                rgba: rgba,
-                hex: rgbToHEX(rgba),
-                hsl: hsla.slice(0,3),
-                hsla: hsla};
-    }
-
-    c_c.lighten = function(color,deg){
-        return this.adjust_lightness(color, deg)
-    }
-
-    c_c.darken = function(color,deg){
-        return this.adjust_lightness(color, -deg)
-    }
-
-    // ALPHA
-    c_c.adjust_alpha = function(color,deg,scale){
-        var rgba = color.rgba().slice(0),
-            hsla = color.hsla().slice(0),
-            a;
-
-        if(deg){
-            a = Math.round(Math.max(Math.min(this.alpha(color) + deg, 1),0)*100)/100;
-        }else{
-            scale>=0
-            ? a = Math.floor((1-this.alpha(color))*scale+(this.alpha(color)*100))/100
-            : a = Math.floor(this.alpha(color)*Math.abs(scale))/100
-        }
-
-        rgba[3] = a;
-        hsla[3] = a
-        return {
-            rgba: rgba,
-            hsla: hsla
-        };
-    }
-
-    c_c.opacify = function(color,deg){
-        return this.adjust_alpha(color,deg)
-    }
-
-    c_c.transparentize = function(color,deg){
-        return this.adjust_alpha(color,-deg)
-    }
-
-    c_c.fade_in = function(color,deg){
-        return this.adjust_alpha(color,deg)
-    }
-
-    c_c.fade_out = function(color,deg){
-        return this.adjust_alpha(color,-deg)
-    }
-
-    // OTHER COLOR FUNCTIONS
-    c_c.adjust_color = function(color,opt){
-        var rgba = color.rgba().slice(0),
-            hsla = color.hsla().slice(0);
-        var operations = {
-            red: function(deg){rgba[0] = this.adjust_red(color,deg).rgba[0]},
-            green: function(deg){rgba[1] = this.adjust_green(color,deg).rgba[1]},
-            blue: function(deg){rgba[2] = this.adjust_blue(color,deg).rgba[2]},
-            hue: function(deg){hsla[0] = this.adjust_hue(color,deg).hsla[0]},
-            saturation: function(deg){hsla[1] = this.adjust_saturation(color,deg).hsla[1]},
-            lightoness: function(deg){hsla[2] = this.adjust_lightness(color,deg).hsla[2]},
-            alpha: function(deg){
-                    var a =  this.adjust_alpha(color,deg).hsla[3];
-                    rgba[3] = a;
-                    hsla[3] = a;
-                }
-        }
-
-        getKeys(opt).forEach(function(key){
-            operations[key].call(this,opt[key]);
-        },this);
-
-        return {rgb: rgba.slice(0,3),
-                rgba: rgba,
-                hex: rgbToHEX(rgba),
-                hsl: hsla.slice(0,3),
-                hsla: hsla};
-    }
-
-    c_c.scale_color = function(color,opt){
-        var rgba = color.rgba().slice(0),
-            hsla = color.hsla().slice(0);
-        var operations = {
-            red: function(scale){rgba[0] = this.adjust_red(color,null,scale).rgba[0]},
-            green: function(scale){rgba[1] = this.adjust_green(color,null,scale).rgba[1]},
-            blue: function(scale){rgba[2] = this.adjust_blue(color,null,scale).rgba[2]},
-            saturation: function(scale){hsla[1] = this.adjust_saturation(color,null,scale).hsla[1]},
-            lightness: function(scale){hsla[2] = this.adjust_lightness(color,null,scale).hsla[2]},
-            alpha: function(scale){
-                    var a =  this.adjust_alpha(color,null,scale).hsla[3];
-                    rgba[3] = a;
-                    hsla[3] = a;
-                }
-        }
-
-        getKeys(opt).forEach(function(key){
-            operations[key].call(this,opt[key]);
-        },this);
-
-        return {rgb: rgba.slice(0,3),
-                rgba: rgba,
-                hex: rgbToHEX(rgba),
-                hsl: hsla.slice(0,3),
-                hsla: hsla};
-    }
-
-    c_c.change_color = function(color,opt){
-        var rgba = color.rgba().slice(0),
-            hsla = color.hsla().slice(0);
-        var operations = {
-            red: function(val){rgba[0] = val},
-            green: function(val){rgba[1] = val},
-            blue: function(val){rgba[2] = val},
-            hue: function(val){hsla[0] = val},
-            saturation: function(val){hsla[1] = val},
-            lightness: function(val){hsla[2] = val},
-            alpha: function(val){
-                    rgba[3] = val;
-                    hsla[3] = val;
-                }
-        }
-
-        Object.keys(opt).forEach(function(key){
-            operations[key].call(this,opt[key]);
-        },this);
-
-        return {rgb: rgba.slice(0,3),
-                rgba: rgba,
-                hex: rgbToHEX(rgba),
-                hsl: hsla.slice(0,3),
-                hsla: hsla};
-    }
-
     function getKeys(obj){
         return Object.keys(obj);
     }
@@ -606,7 +656,6 @@
     // Conversion Functions
     function rgbToHEX(rgba){
         var rgb = rgba.slice(0,3);
-
         function d2h(d) {
             var hex = d.toString(16);
             hex = '00'.substr( 0, 2 - hex.length ) + hex;
