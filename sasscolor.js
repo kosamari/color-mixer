@@ -12,6 +12,24 @@
         this.c_c = c_c;
     }
 
+    // color viewing helper for browser console
+    c_c.print = function (color,set){
+        var bg, data, fg;
+        if(typeof window === 'undefined'){return}
+        if(color.values){
+            bg = color.hex();
+            data = color.values();
+            fg = color.hsl()[2]>50?'#000000' :'#ffffff' ;
+        }else{
+            bg = color.hex;
+            data = color;
+            fg = '#000000';
+        }
+        console.log('%c  ','background:'+bg+'; color:'+fg+'; font-size:45px;');
+        console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
+        return data;
+    }
+
     var colorDict = {
           'aqua': '#00ffff',
           'aliceblue': '#f0f8ff',
@@ -260,33 +278,6 @@
         }
     };
 
-    var SubColor = function(p,f){
-        this.parent = p
-        this.set(f.call(this.parent))
-        this.update = function(){
-            this.set(f.call(this.parent))
-        }
-    };
-    SubColor.prototype = new Color();
-
-    // color viewing helper for browser console
-    c_c.print = function (color){
-        var bg, data, fg;
-        if(typeof window === 'undefined'){return}
-        if(color.values){
-            bg = color.hex();
-            data = color.values();
-            fg = color.hsl()[2]>50?'#000000' :'#ffffff' ;
-        }else{
-            bg = color.hex;
-            data = color;
-            fg = '#000000';
-        }
-        console.log('%c  ','background:'+bg+'; color:'+fg+'; font-size:45px;');
-        console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
-        return data;
-    }
-
     Color.prototype = {
         red: function(){
            return this.hex().substr(1,2);
@@ -312,13 +303,13 @@
         opacity: function(){
             return this.alpha();
         },
-        addSubColor: function(op){
-            var sub = new SubColor(this,op)
+        addSubColor: function(command, fn){
+            var sub = new SubColor(this,command, fn)
             this.subcolors.push(sub)
         },
         invert: function(save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.invert(false)})
+                this.addSubColor(function(){return this.invert(false)},'invert()')
             }
             var inverted = this.rgba().map(function(c,i){
                 if(i === 3) { return c; }
@@ -330,9 +321,9 @@
                     hsl: rgbToHSL(inverted),
                     hsla: rgbToHSL(inverted).concat([inverted[3]])}
         },
-        adjust_red: function(save,deg,scale){
+        adjust_red: function(deg,scale,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.adjust_red(false,deg,scale)})
+                this.addSubColor(function(){return this.adjust_red(deg,scale,false)},'adjust_red('+deg+','+scale+')')
             }
             var hsla,
                 rgba = this.rgba().slice(0);
@@ -352,9 +343,9 @@
                     hsl: hsla.slice(0,3),
                     hsla: hsla};
         },
-        adjust_green: function(save,deg,scale){
+        adjust_green: function(deg,scale,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.adjust_green(false,deg,scale)})
+                this.addSubColor(function(){return this.adjust_green(deg,scale,false)},'adjust_green('+deg+','+scale+')')
             }
             var hsla,
                 rgba = this.rgba().slice(0);
@@ -374,9 +365,9 @@
                     hsl: hsla.slice(0,3),
                     hsla: hsla};
         },
-        adjust_blue: function(save,deg,scale){
+        adjust_blue: function(deg,scale,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.adjust_blue(false,deg,scale)})
+                this.addSubColor(function(){return this.adjust_blue(deg,scale,false)},'adjust_blue('+deg+','+scale+')')
             }
             var hsla,
                 rgba = this.rgba().slice(0);
@@ -396,9 +387,9 @@
                     hsl: hsla.slice(0,3),
                     hsla: hsla};
         },
-        adjust_hue: function(save,deg){
+        adjust_hue: function(deg,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.adjust_hue(false,deg)})
+                this.addSubColor(function(){return this.adjust_hue(deg,false)},'adjust_hue('+deg+')')
             }
             var rgb,
                 hsla = this.hsla().slice(0),
@@ -413,9 +404,9 @@
                     hsl: hsla.slice(0,3),
                     hsla: hsla};
         },
-        adjust_saturation: function(save,deg,scale){
+        adjust_saturation: function(deg,scale,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.adjust_saturation(false,deg,scale)})
+                this.addSubColor(function(){return this.adjust_saturation(deg,scale,false)},'adjust_saturation('+deg+','+scale+')')
             }
             var rgb,
                 hsla = this.hsla().slice(0);
@@ -436,9 +427,9 @@
                     hsl: hsla.slice(0,3),
                     hsla: hsla};
         },
-        adjust_lightness: function(save,deg,scale){
+        adjust_lightness: function(deg,scale,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.adjust_lightness(false,deg,scale)})
+                this.addSubColor(function(){return this.adjust_lightness(deg,scale,false)},'adjust_lightness('+deg+','+scale+')')
             }
             var rgb,
                 hsla = save.hsla().slice(0);
@@ -459,9 +450,9 @@
                     hsl: hsla.slice(0,3),
                     hsla: hsla};
         },
-        adjust_alpha: function(save,deg,scale){
+        adjust_alpha: function(deg,scale,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.adjust_alpha(false,deg,scale)})
+                this.addSubColor(function(){return this.adjust_alpha(deg,scale,false)},'adjust_alpha('+deg+','+scale+')')
             }
             var rgba = this.rgba().slice(0),
                 hsla = this.hsla().slice(0),
@@ -484,67 +475,67 @@
         },
         complement: function(save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.complement(false)})
+                this.addSubColor(function(){return this.complement(false)},'complement()')
             }
-            return this.adjust_hue(false,180)
+            return this.adjust_hue(180,false)
         },
-        saturate: function(save,deg){
+        saturate: function(deg,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.saturate(false,deg)})
+                this.addSubColor(function(){return this.saturate(deg,false)},'saturate('+deg+')')
             }
-            return this.adjust_saturation(false,deg)
+            return this.adjust_saturation(deg,false)
         },
-        desaturate: function(save,deg){
+        desaturate: function(deg,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.desaturate(false,-deg)})
+                this.addSubColor(function(){return this.desaturate(-deg,false)},'desaturate('+deg+')')
             }
-            return this.adjust_saturation(false,-deg)
+            return this.adjust_saturation(-deg,false)
         },
         grayscale: function(save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.grayscale(false,100)})
+                this.addSubColor(function(){return this.grayscale(false)},'grayscale()')
             }
-            return this.adjust_saturation(false,100)
+            return this.adjust_saturation(100,false)
         },
-        lighten: function(save,deg){
+        lighten: function(deg,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.lighten(false, deg)})
+                this.addSubColor(function(){return this.lighten(deg,false)},'lighten('+deg+')')
             }
-            return this.adjust_lightness(false, deg)
+            return this.adjust_lightness(deg,false)
         },
-        darken: function(save,deg){
+        darken: function(deg,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.darken(false, deg)})
+                this.addSubColor(function(){return this.darken(deg)},'darken('+deg+')')
             }
-            return this.adjust_lightness(false, -deg)
+            return this.adjust_lightness(-deg,false)
         },
-        opacify: function(save,deg){
+        opacify: function(deg,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.opacify(false,deg)})
+                this.addSubColor(function(){return this.opacify(deg,false)},'opacify('+deg+')')
             }
-            return this.adjust_alpha(false,deg)
+            return this.adjust_alpha(deg,false)
         },
-        transparentize: function(save,deg){
+        transparentize: function(deg,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.transparentize(false,deg)})
+                this.addSubColor(function(){return this.transparentize(deg,false)},'transparentize('+deg+')')
             }
-            return this.adjust_alpha(false,-deg)
+            return this.adjust_alpha(-deg,false)
         },
-        fade_in: function(save,deg){
+        fade_in: function(deg,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.fade_in(false,deg)})
+                this.addSubColor(function(){return this.fade_in(deg,false)},'fade_in('+deg+')')
             }
-            return this.adjust_alpha(false,deg)
+            return this.adjust_alpha(deg,false)
         },
-        fade_out: function(save,deg){
+        fade_out: function(deg,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.fade_out(false,deg)})
+                this.addSubColor(function(){return this.fade_out(deg,false)},'fade_out('+deg+')')
             }
-            return this.adjust_alpha(false,-deg)
+            return this.adjust_alpha(-deg,false)
         },
-        adjust_color: function(save,opt){
+        adjust_color: function(opt,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.adjust_color(false,opt)})
+                this.addSubColor(function(){return this.adjust_color(opt,false)},'adjust_color('+opt+')')
             }
             var rgba = this.rgba().slice(0),
                 hsla = this.hsla().slice(0);
@@ -572,9 +563,9 @@
                     hsl: hsla.slice(0,3),
                     hsla: hsla};
         },
-        scale_color: function(save,opt){
+        scale_color: function(opt,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.scale_color(false,opt)})
+                this.addSubColor(function(){return this.scale_color(opt,save)},'scale_color('+opt+')')
             }
             var rgba = this.rgba().slice(0),
                 hsla = this.hsla().slice(0);
@@ -601,9 +592,9 @@
                     hsl: hsla.slice(0,3),
                     hsla: hsla};
         },
-        change_color: function(save,opt){
+        change_color: function(opt,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.change_color(false,opt)})
+                this.addSubColor(function(){return this.change_color(opt,false)},'change_color('+opt+')')
             }
             var rgba = this.rgba().slice(0),
                 hsla = this.hsla().slice(0);
@@ -631,6 +622,16 @@
                     hsla: hsla};
         }
     }
+
+    var SubColor = function(p,f,c){
+        this.parent = p
+        this.command = c
+        this.set(f.call(this.parent))
+        this.update = function(){
+            this.set(f.call(this.parent))
+        }
+    };
+    SubColor.prototype = new Color();
 
     function updateSubs(){
         this.subcolors.forEach(function(color){
