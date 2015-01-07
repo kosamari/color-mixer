@@ -256,11 +256,20 @@
 
     // color viewing helper for browser console
     c_c.print = function (color){
-        if(typeof window === 'undefined'){return console.log(color.hex()); }
-        var bg = color.hex(),
-            fg = this.complement(color).hex;
-        console.log('%c  ','background:'+bg+'; font-size:40px;');
-        return color.values();
+        var bg, data, fg;
+        if(typeof window === 'undefined'){return}
+        if(color.values){
+            bg = color.hex();
+            data = color.values();
+            fg = c_c.lightness(color)>50?'#000000' :'#ffffff' ;
+        }else{
+            bg = color.hex;
+            data = color;
+            fg = '#000000';
+        }
+        console.log('%c  ','background:'+bg+'; color:'+fg+'; font-size:45px;');
+        console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
+        return data;
     }
 
     // color manipulation methods
@@ -288,7 +297,7 @@
     }
 
     c_c.lightness = function(color){
-        return color.hsl()[3];
+        return color.hsl()[2];
     }
 
     c_c.alpha = function(color){
