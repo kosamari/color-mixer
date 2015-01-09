@@ -27,7 +27,18 @@
         }
         console.log('%c  ','background:'+bg+'; color:'+fg+'; font-size:45px;');
         console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
-        return data;
+
+        if(set){
+            color.subcolors.forEach(function(c){
+                var bg = c.hex(),
+                    data = c.values(),
+                    fg = c.hsl()[2]>50?'#000000' :'#ffffff';
+                console.log('%c  ','background:'+bg+'; color:'+fg+'; font-size:45px;');
+                console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
+                console.log('%c '+c.command+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
+            })
+        }
+        // return data;
     }
 
     var colorDict = {
@@ -304,8 +315,14 @@
             return this.alpha();
         },
         addSubColor: function(command, fn){
-            var sub = new SubColor(this,command, fn)
-            this.subcolors.push(sub)
+            if(this.showSubcolorCommands().indexOf(fn) === -1){
+                var sub = new SubColor(this, command, fn)
+                this.subcolors.push(sub)
+            }
+        },
+        showSubcolorCommands: function(){
+            var list = this.subcolors.map(function(color){return color.command;})
+            return list
         },
         invert: function(save){
             if(save===undefined||save===true){
@@ -319,7 +336,7 @@
                     rgba: inverted,
                     hex: rgbToHEX(inverted),
                     hsl: rgbToHSL(inverted),
-                    hsla: rgbToHSL(inverted).concat([inverted[3]])}
+                    hsla: rgbToHSL(inverted).concat([inverted[3]])};
         },
         adjust_red: function(deg,scale,save){
             if(save===undefined||save===true){
@@ -428,6 +445,7 @@
                     hsla: hsla};
         },
         adjust_lightness: function(deg,scale,save){
+            console.log(deg)
             if(save===undefined||save===true){
                 this.addSubColor(function(){return this.adjust_lightness(deg,scale,false)},'adjust_lightness('+deg+','+scale+')')
             }
@@ -505,7 +523,7 @@
         },
         darken: function(deg,save){
             if(save===undefined||save===true){
-                this.addSubColor(function(){return this.darken(deg)},'darken('+deg+')')
+                this.addSubColor(function(){return this.darken(deg,false)},'darken('+deg+')')
             }
             return this.adjust_lightness(-deg,false)
         },
