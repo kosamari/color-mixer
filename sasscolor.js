@@ -315,14 +315,13 @@
             return this.alpha();
         },
         addSubColor: function(command, fn){
-            if(this.showSubcolorCommands().indexOf(fn) === -1){
+            if(this.pluck(this.subcolors,'command').indexOf(fn) === -1){
                 var sub = new SubColor(this, command, fn)
                 this.subcolors.push(sub)
             }
         },
-        showSubcolorCommands: function(){
-            var list = this.subcolors.map(function(color){return color.command;})
-            return list
+        pluck: function(arr,key){
+            return arr.map(function(d){return d[key];})
         },
         invert: function(save){
             if(save===undefined||save===true){
