@@ -27,26 +27,16 @@
         console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
 
         if(set){
-            var blocktext =[]
-            var blockstyle = ['text']
-            var guidetext =[]
-            var guidestyle = ['text']
-            var commandtext = []
-            color.subcolors.forEach(function(c){
+            var array = typeof(set) === 'object'? set : color.subcolors;
+            if (array.length === 0){return console.log('No subcolors found');}
+            array.forEach(function(c){
                 var value = c.values();
                 var bg = value.hex,
                     fg = value.hsl[2]>50?'#000000' :'#ffffff';
-                blocktext.push('%c  ')
-                guidetext.push('%c '+bg+' ')
-                blockstyle.push('background:'+bg+'; color:'+fg+'; font-size:45px;')
-                guidestyle.push('background:'+bg+'; color:'+fg+'; font-size:10px;')
-                commandtext.push(c.command)
+                console.log('%c  ','background:'+bg+'; color:'+fg+'; font-size:45px;')
+                console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;')
+                console.log(c.command)
             })
-            blockstyle[0] = blocktext.join('')
-            guidestyle[0] = guidetext.join('')
-            console.log.apply(console, blockstyle)
-            console.log.apply(console, guidestyle)
-            console.log.apply(console, commandtext)
         }
     }
 
@@ -452,7 +442,7 @@
                 this.addSubColor(function(){return this.adjust_lightness(deg,scale,false)},'adjust_lightness('+deg+','+scale+')')
             }
             var rgb,
-                hsla = save.hsla().slice(0);
+                hsla = this.hsla().slice(0);
 
             if(deg){
                 hsla[2] = Math.max(Math.min(hsla[2] + deg, 100),0);
@@ -521,13 +511,13 @@
             if(save===undefined||save===true){
                 this.addSubColor(function(){return this.lighten(deg,false)},'lighten('+deg+')')
             }
-            return this.adjust_lightness(deg,false)
+            return this.adjust_lightness(deg,false,false)
         },
         darken: function(deg,save){
             if(save===undefined||save===true){
                 this.addSubColor(function(){return this.darken(deg,false)},'darken('+deg+')')
             }
-            return this.adjust_lightness(-deg,false)
+            return this.adjust_lightness(-deg,false,false)
         },
         opacify: function(deg,save){
             if(save===undefined||save===true){
@@ -640,6 +630,21 @@
                     hex: rgbToHEX(rgba),
                     hsl: hsla.slice(0,3),
                     hsla: hsla};
+        },
+        whiten5: function(){
+            this.lighten(0)
+            this.lighten(20)
+            this.lighten(40)
+            this.lighten(60)
+            this.lighten(80)
+            var array = this.pluck(this.subcolors, 'command')
+            return [
+                this.subcolors[array.indexOf('lighten(0)')],
+                this.subcolors[array.indexOf('lighten(20)')],
+                this.subcolors[array.indexOf('lighten(40)')],
+                this.subcolors[array.indexOf('lighten(60)')],
+                this.subcolors[array.indexOf('lighten(80)')],
+                ]
         }
     }
 
