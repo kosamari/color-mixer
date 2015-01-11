@@ -631,19 +631,84 @@
                     hsl: hsla.slice(0,3),
                     hsla: hsla};
         },
-        whiten5: function(){
-            this.lighten(0)
-            this.lighten(20)
-            this.lighten(40)
-            this.lighten(60)
-            this.lighten(80)
+        lighten5: function(){
+            this.adjust_lightness(null,0)
+            this.adjust_lightness(null,20)
+            this.adjust_lightness(null,40)
+            this.adjust_lightness(null,60)
+            this.adjust_lightness(null,80)
             var array = this.pluck(this.subcolors, 'command')
             return [
-                this.subcolors[array.indexOf('lighten(0)')],
-                this.subcolors[array.indexOf('lighten(20)')],
-                this.subcolors[array.indexOf('lighten(40)')],
-                this.subcolors[array.indexOf('lighten(60)')],
-                this.subcolors[array.indexOf('lighten(80)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,0)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,20)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,40)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,60)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,80)')],
+                ]
+        },
+        lighten10: function(){
+            this.adjust_lightness(null,0)
+            this.adjust_lightness(null,10)
+            this.adjust_lightness(null,20)
+            this.adjust_lightness(null,30)
+            this.adjust_lightness(null,40)
+            this.adjust_lightness(null,50)
+            this.adjust_lightness(null,60)
+            this.adjust_lightness(null,70)
+            this.adjust_lightness(null,80)
+            this.adjust_lightness(null,90)
+            var array = this.pluck(this.subcolors, 'command')
+            return [
+                this.subcolors[array.indexOf('adjust_lightness(null,0)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,10)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,20)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,30)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,40)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,50)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,60)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,70)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,80)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,90)')]
+                ]
+        },
+        darken5: function(){
+            this.adjust_lightness(null,-80)
+            this.adjust_lightness(null,-60)
+            this.adjust_lightness(null,-40)
+            this.adjust_lightness(null,-20)
+            this.adjust_lightness(null,0)
+            var array = this.pluck(this.subcolors, 'command')
+            return [
+                this.subcolors[array.indexOf('adjust_lightness(null,0)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-80)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-60)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-40)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-20)')],
+                ]
+        },
+        darken10: function(){
+            this.adjust_lightness(null,0)
+            this.adjust_lightness(null,-90)
+            this.adjust_lightness(null,-80)
+            this.adjust_lightness(null,-70)
+            this.adjust_lightness(null,-60)
+            this.adjust_lightness(null,-50)
+            this.adjust_lightness(null,-40)
+            this.adjust_lightness(null,-30)
+            this.adjust_lightness(null,-20)
+            this.adjust_lightness(null,-10)
+            var array = this.pluck(this.subcolors, 'command')
+            return [
+                this.subcolors[array.indexOf('adjust_lightness(null,0)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-90)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-80)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-70)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-60)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-50)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-40)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-30)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-20)')],
+                this.subcolors[array.indexOf('adjust_lightness(null,-10)')]
                 ]
         }
     }
