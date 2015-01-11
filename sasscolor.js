@@ -310,9 +310,13 @@
         opacity: function(){
             return this.alpha();
         },
-        addSubColor: function(command, fn){
-            if(this.pluck(this.subcolors,'command').indexOf(fn) === -1){
-                var sub = new SubColor(this, command, fn)
+        subColorIndex: function(command){
+            var arr = this.pluck(this.subcolors, 'command');
+            return arr.indexOf(command)
+        },
+        addSubColor: function(fn, command){
+            if(this.subColorIndex(command) === -1){
+                var sub = new SubColor(this, fn, command)
                 this.subcolors.push(sub)
             }
         },
