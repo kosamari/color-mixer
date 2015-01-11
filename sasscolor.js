@@ -550,14 +550,14 @@
             var rgba = this.rgba().slice(0),
                 hsla = this.hsla().slice(0);
             var operations = {
-                red: function(deg){rgba[0] = this.adjust_red(color,deg).rgba[0]},
-                green: function(deg){rgba[1] = this.adjust_green(color,deg).rgba[1]},
-                blue: function(deg){rgba[2] = this.adjust_blue(color,deg).rgba[2]},
-                hue: function(deg){hsla[0] = this.adjust_hue(color,deg).hsla[0]},
-                saturation: function(deg){hsla[1] = this.adjust_saturation(color,deg).hsla[1]},
-                lightoness: function(deg){hsla[2] = this.adjust_lightness(color,deg).hsla[2]},
+                red: function(deg){rgba[0] = this.adjust_red(deg,false,save).rgba[0]},
+                green: function(deg){rgba[1] = this.adjust_green(deg,false,save).rgba[1]},
+                blue: function(deg){rgba[2] = this.adjust_blue(deg,false,save).rgba[2]},
+                hue: function(deg){hsla[0] = this.adjust_hue(deg,save).hsla[0]},
+                saturation: function(deg){hsla[1] = this.adjust_saturation(deg,false,save).hsla[1]},
+                lightoness: function(deg){hsla[2] = this.adjust_lightness(deg,false,save).hsla[2]},
                 alpha: function(deg){
-                        var a =  this.adjust_alpha(color,deg).hsla[3];
+                        var a =  this.adjust_alpha(deg,false,save).hsla[3];
                         rgba[3] = a;
                         hsla[3] = a;
                     }
@@ -580,13 +580,13 @@
             var rgba = this.rgba().slice(0),
                 hsla = this.hsla().slice(0);
             var operations = {
-                red: function(scale){rgba[0] = this.adjust_red(color,null,scale).rgba[0]},
-                green: function(scale){rgba[1] = this.adjust_green(color,null,scale).rgba[1]},
-                blue: function(scale){rgba[2] = this.adjust_blue(color,null,scale).rgba[2]},
-                saturation: function(scale){hsla[1] = this.adjust_saturation(color,null,scale).hsla[1]},
-                lightness: function(scale){hsla[2] = this.adjust_lightness(color,null,scale).hsla[2]},
+                red: function(scale){rgba[0] = this.adjust_red(null,scale,save).rgba[0]},
+                green: function(scale){rgba[1] = this.adjust_green(null,scale,save).rgba[1]},
+                blue: function(scale){rgba[2] = this.adjust_blue(null,scale,save).rgba[2]},
+                saturation: function(scale){hsla[1] = this.adjust_saturation(null,scale,save).hsla[1]},
+                lightness: function(scale){hsla[2] = this.adjust_lightness(null,scale,save).hsla[2]},
                 alpha: function(scale){
-                        var a =  this.adjust_alpha(color,null,scale).hsla[3];
+                        var a =  this.adjust_alpha(null,scale,save).hsla[3];
                         rgba[3] = a;
                         hsla[3] = a;
                     }
