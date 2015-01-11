@@ -18,27 +18,36 @@
         if(typeof window === 'undefined'){return}
         if(color.values){
             bg = color.hex();
-            data = color.values();
             fg = color.hsl()[2]>50?'#000000' :'#ffffff' ;
         }else{
             bg = color.hex;
-            data = color;
             fg = '#000000';
         }
         console.log('%c  ','background:'+bg+'; color:'+fg+'; font-size:45px;');
         console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
 
         if(set){
+            var blocktext =[]
+            var blockstyle = ['text']
+            var guidetext =[]
+            var guidestyle = ['text']
+            var commandtext = []
             color.subcolors.forEach(function(c){
-                var bg = c.hex(),
-                    data = c.values(),
-                    fg = c.hsl()[2]>50?'#000000' :'#ffffff';
-                console.log('%c  ','background:'+bg+'; color:'+fg+'; font-size:45px;');
-                console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
-                console.log('%c '+c.command+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
+                var value = c.values();
+                var bg = value.hex,
+                    fg = value.hsl[2]>50?'#000000' :'#ffffff';
+                blocktext.push('%c  ')
+                guidetext.push('%c '+bg+' ')
+                blockstyle.push('background:'+bg+'; color:'+fg+'; font-size:45px;')
+                guidestyle.push('background:'+bg+'; color:'+fg+'; font-size:10px;')
+                commandtext.push(c.command)
             })
+            blockstyle[0] = blocktext.join('')
+            guidestyle[0] = guidetext.join('')
+            console.log.apply(console, blockstyle)
+            console.log.apply(console, guidestyle)
+            console.log.apply(console, commandtext)
         }
-        // return data;
     }
 
     var colorDict = {
