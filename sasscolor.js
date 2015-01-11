@@ -16,15 +16,6 @@
     c_c.print = function (color,set){
         var bg, data, fg;
         if(typeof window === 'undefined'){return}
-        if(color.values){
-            bg = color.hex();
-            fg = color.hsl()[2]>50?'#000000' :'#ffffff' ;
-        }else{
-            bg = color.hex;
-            fg = '#000000';
-        }
-        console.log('%c  ','background:'+bg+'; color:'+fg+'; font-size:45px;');
-        console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
 
         if(set){
             var array = typeof(set) === 'object'? set : color.subcolors;
@@ -37,7 +28,18 @@
                 console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;')
                 console.log(c.command)
             })
+            return;
         }
+
+        if(color.values){
+            bg = color.hex();
+            fg = color.hsl()[2]>50?'#000000' :'#ffffff' ;
+        }else{
+            bg = color.hex;
+            fg = '#ffffff';
+        }
+        console.log('%c  ','background:'+bg+'; color:'+fg+'; font-size:45px;');
+        console.log('%c '+bg+' ','background:'+bg+'; color:'+fg+'; font-size:10px;');
     }
 
     var colorDict = {
