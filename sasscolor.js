@@ -202,7 +202,6 @@
             rgbaval = hexToRGB(hexval);
             hslaval = rgbToHSL(rgbaval);
             name = hexToName(hexval);
-            updateSubs.call(this);
         }
 
         this.rgb = function(r,g,b){
@@ -216,7 +215,6 @@
             hexval = rgbToHEX(rgbaval);
             hslaval = rgbToHSL(rgbaval);
             name = hexToName(hexval);
-            updateSubs.call(this);
         }
 
         this.hsl = function(h,s,l){
@@ -230,7 +228,6 @@
             rgbaval = hslToRGB(hslaval);
             hexval= rgbToHEX(rgbaval);
             name = hexToName(hexval);
-            updateSubs.call(this);
         }
 
         this.mix = function(color1, color2, w) {
@@ -246,7 +243,6 @@
             hexval = rgbToHEX(rgbaval);
             hslaval = rgbToHSL(rgbaval);
             name = hexToName(hexval);
-            updateSubs.call(this);
         }
 
         this.name = function(str) {
@@ -256,7 +252,6 @@
             rgbaval = hexToRGB(hexval);
             hslaval = rgbToHSL(rgbaval);
             name = hexToName(hexval);
-            updateSubs.call(this);
         }
 
         this.values = function(){
@@ -444,7 +439,6 @@
                     hsla: hsla};
         },
         adjust_lightness: function(deg,scale,save){
-            console.log(deg)
             if(save===undefined||save===true){
                 this.addSubColor(function(){return this.adjust_lightness(deg,scale,false)},'adjust_lightness('+deg+','+scale+')')
             }
@@ -641,20 +635,14 @@
     }
 
     var SubColor = function(p,f,c){
-        this.parent = p
-        this.command = c
-        this.set(f.call(this.parent))
-        this.update = function(){
-            this.set(f.call(this.parent))
+        this.parent = p;
+        this.command = c;
+        this.values = function(){
+            return f.call(this.parent)
         }
     };
-    SubColor.prototype = new Color();
 
-    function updateSubs(){
-        this.subcolors.forEach(function(color){
-            color.update();
-        })
-    }
+
     function getKeys(obj){
         return Object.keys(obj);
     }
