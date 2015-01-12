@@ -13,14 +13,12 @@
     }
 
     // color viewing helper for browser console
-    c_c.print = function (color,set){
+    c_c.print = function (color){
         var bg, data, fg;
         if(typeof window === 'undefined'){return}
 
-        if(set){
-            var array = typeof(set) === 'object'? set : color.subcolors;
-            if (array.length === 0){return console.log('No subcolors found');}
-            array.forEach(function(c){
+        if(Array.isArray(color)){
+            color.forEach(function(c){
                 var value = c.values();
                 var bg = value.hex,
                     fg = value.hsl[2]>50?'#000000' :'#ffffff';
