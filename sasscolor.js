@@ -750,6 +750,77 @@
                 this.subcolors[array.indexOf('subcolormix(base,complement(),25)')],
                 this.subcolors[array.indexOf('complement()')],
                 ]
+        },
+        complement10: function(){
+            this.complement();
+            var array = this.pluck(this.subcolors, 'command')
+            var base = this;
+            var comp = this.subcolors[array.indexOf('complement()')];
+            this.subcolormix(base,comp,11.11)
+            this.subcolormix(base,comp,22.22)
+            this.subcolormix(base,comp,33.33)
+            this.subcolormix(base,comp,44.44)
+            this.subcolormix(base,comp,55.55)
+            this.subcolormix(base,comp,66.66)
+            this.subcolormix(base,comp,77.77)
+            this.subcolormix(base,comp,88.88)
+            array = this.pluck(this.subcolors, 'command')
+            return [
+                this,
+                this.subcolors[array.indexOf('subcolormix(base,complement(),88.88)')],
+                this.subcolors[array.indexOf('subcolormix(base,complement(),77.77)')],
+                this.subcolors[array.indexOf('subcolormix(base,complement(),66.66)')],
+                this.subcolors[array.indexOf('subcolormix(base,complement(),55.55)')],
+                this.subcolors[array.indexOf('subcolormix(base,complement(),44.44)')],
+                this.subcolors[array.indexOf('subcolormix(base,complement(),33.33)')],
+                this.subcolors[array.indexOf('subcolormix(base,complement(),22.22)')],
+                this.subcolors[array.indexOf('subcolormix(base,complement(),11.11)')],
+                this.subcolors[array.indexOf('complement()')],
+                ]
+        },
+        invert5: function(){
+            this.invert();
+            var array = this.pluck(this.subcolors, 'command')
+            var base = this;
+            var comp = this.subcolors[array.indexOf('invert()')];
+            this.subcolormix(base,comp,25)
+            this.subcolormix(base,comp,50)
+            this.subcolormix(base,comp,75)
+            array = this.pluck(this.subcolors, 'command')
+            return [
+                this,
+                this.subcolors[array.indexOf('subcolormix(base,invert(),75)')],
+                this.subcolors[array.indexOf('subcolormix(base,invert(),50)')],
+                this.subcolors[array.indexOf('subcolormix(base,invert(),25)')],
+                this.subcolors[array.indexOf('invert()')],
+                ]
+        },
+        invert10: function(){
+            this.invert();
+            var array = this.pluck(this.subcolors, 'command')
+            var base = this;
+            var comp = this.subcolors[array.indexOf('invert()')];
+            this.subcolormix(base,comp,11.11)
+            this.subcolormix(base,comp,22.22)
+            this.subcolormix(base,comp,33.33)
+            this.subcolormix(base,comp,44.44)
+            this.subcolormix(base,comp,55.55)
+            this.subcolormix(base,comp,66.66)
+            this.subcolormix(base,comp,77.77)
+            this.subcolormix(base,comp,88.88)
+            array = this.pluck(this.subcolors, 'command')
+            return [
+                this,
+                this.subcolors[array.indexOf('subcolormix(base,invert(),88.88)')],
+                this.subcolors[array.indexOf('subcolormix(base,invert(),77.77)')],
+                this.subcolors[array.indexOf('subcolormix(base,invert(),66.66)')],
+                this.subcolors[array.indexOf('subcolormix(base,invert(),55.55)')],
+                this.subcolors[array.indexOf('subcolormix(base,invert(),44.44)')],
+                this.subcolors[array.indexOf('subcolormix(base,invert(),33.33)')],
+                this.subcolors[array.indexOf('subcolormix(base,invert(),22.22)')],
+                this.subcolors[array.indexOf('subcolormix(base,invert(),11.11)')],
+                this.subcolors[array.indexOf('invert()')],
+                ]
         }
     }
 
