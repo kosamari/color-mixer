@@ -197,6 +197,8 @@
     var Color = c_c.Color = function(opt){
         var rgbaval,hexval,hslaval,name;
 
+        this.command = 'base'
+
         this.hex = function(str){
             if(arguments.length<=0){return hexval;}
             hexval = str.toLowerCase();
@@ -322,6 +324,23 @@
         },
         pluck: function(arr,key){
             return arr.map(function(d){return d[key];})
+        },
+        subcolormix: function(color1, color2, w, save) {
+            if(save===undefined||save===true){
+                this.addSubColor(function(){return this.subcolormix(color1, color2, w, false)},'subcolormix('+color1.command+','+color2.command+','+w+')')
+            }
+            var weight = w ? w : 50,
+                base = color1.rgba(),
+                brend = color2.rgba(),
+                newcolor = base.map(function(c,i){
+                    if(i === 3){ return brend[i] + (c - brend[i]) * (weight / 100); }
+                    return Math.floor(brend[i] + (c - brend[i]) * (weight / 100));
+                });
+            return {rgb: newcolor.slice(0,3),
+                    rgba: newcolor,
+                    hex: rgbToHEX(newcolor),
+                    hsl: rgbToHSL(newcolor),
+                    hsla: rgbToHSL(newcolor).concat([newcolor[3]])};
         },
         invert: function(save){
             if(save===undefined||save===true){
@@ -716,14 +735,46 @@
                 this.subcolors[array.indexOf('adjust_lightness(null,-20)')],
                 this.subcolors[array.indexOf('adjust_lightness(null,-10)')]
                 ]
+        },
+        complement5: function(){
+            this.complement();
+            var array = this.pluck(this.subcolors, 'command')
+            var base = this;
+            var comp = this.subcolors[array.indexOf('complement()')];
+            this.subcolormix(base,comp,25)
+            this.subcolormix(base,comp,50)
+            this.subcolormix(base,comp,75)
+            array = this.pluck(this.subcolors, 'command')
+            return [
+                this,
+                this.subcolors[array.indexOf('subcolormix(base,complement(),75)')],
+                this.subcolors[array.indexOf('subcolormix(base,complement(),50)')],
+                this.subcolors[array.indexOf('subcolormix(base,complement(),25)')],
+                this.subcolors[array.indexOf('complement()')],
+                ]
         }
     }
 
-    var SubColor = function(p,f,c){
-        this.parent = p;
-        this.command = c;
+    var SubColor = function(parent,func,command){
+        this.parent = parent;
+        this.command = command;
         this.values = function(){
-            return f.call(this.parent)
+            return func.call(this.parent)
+        }
+        this.rgba = function(){
+          return this.values().rgba
+        }
+        this.rgb = function(){
+          return this.values().rgb
+        }
+        this.hex = function(){
+          return this.values().hex
+        }
+        this.hsla = function(){
+          return this.values().hsla
+        }
+        this.hsl = function(){
+          return this.values().hsl
         }
     };
 
