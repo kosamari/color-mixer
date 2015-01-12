@@ -821,6 +821,20 @@
                 this.subcolors[array.indexOf('subcolormix(base,invert(),11.11)')],
                 this.subcolors[array.indexOf('invert()')],
                 ]
+        },
+        desaturate5: function(){
+            this.adjust_saturation(-100);
+            this.adjust_saturation(null,-75);
+            this.adjust_saturation(null,-50);
+            this.adjust_saturation(null,-25);
+            var array = this.pluck(this.subcolors, 'command')
+            return [
+                this,
+                this.subcolors[array.indexOf('adjust_saturation(null,-75)')],
+                this.subcolors[array.indexOf('adjust_saturation(null,-50)')],
+                this.subcolors[array.indexOf('adjust_saturation(null,-25)')],
+                this.subcolors[array.indexOf('adjust_saturation(-100,undefined)')],
+                ]
         }
     }
 
