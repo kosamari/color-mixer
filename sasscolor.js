@@ -163,10 +163,6 @@
         opacity: function(){
             return this.alpha();
         },
-        subColorIndex: function(command){
-            var arr = pluck(this.subcolors, 'command');
-            return arr.indexOf(command);
-        },
         subcolormix: function(c1, c2, w, save) {
             if(save===undefined||save===true){
                 return addSubColor
@@ -934,12 +930,16 @@
             'rebeccapurple': '#663399'
         };
 
+    function subColorIndex(command){
+        var arr = pluck(this.subcolors, 'command');
+        return arr.indexOf(command);
+    }
     function addSubColor(fn, command){
-            if(this.subColorIndex(command) === -1){
+            if(subColorIndex.call(this, command) === -1){
                 var sub = new SubColor(this, fn, command);
                 this.subcolors.push(sub);
             }
-            return this.subcolors[this.subColorIndex(command)];
+            return this.subcolors[subColorIndex.call(this, command)];
         }
     function pluck(arr,key){
         return arr.map(function(d){ return d[key]; });
