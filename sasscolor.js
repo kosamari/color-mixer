@@ -28,7 +28,7 @@
                 console.log('%c '+bg+' ', guideCss);
                 console.log(c.command);
             });
-            return;
+            return color.map(function(c){ return c.hex(); });
         }
 
         if(color.values){
@@ -43,6 +43,8 @@
         console.log('%c  ', blockCss);
         console.log('%c '+bg+' ', guideCss);
         console.log(color.command);
+
+        return [color.hex()];
     };
 
     //  base color object constructor
