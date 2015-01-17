@@ -620,114 +620,55 @@
         },
 
         // Color Sets
-        lighten5: function(){
-            return [
-                this,
-                this.adjust_lightness(null, 20),
-                this.adjust_lightness(null, 40),
-                this.adjust_lightness(null, 60),
-                this.adjust_lightness(null, 80),
-            ];
+        lighten_set: function(n){
+            var arr = [this];
+            var step = 100/ n;
+            for(var i=1;i<n;i++){
+                arr.push(this.adjust_lightness(null, step*i))
+            }
+            return arr;
         },
-        lighten10: function(){
-            return [
-                this,
-                this.adjust_lightness(null, 10),
-                this.adjust_lightness(null, 20),
-                this.adjust_lightness(null, 30),
-                this.adjust_lightness(null, 40),
-                this.adjust_lightness(null, 50),
-                this.adjust_lightness(null, 60),
-                this.adjust_lightness(null, 70),
-                this.adjust_lightness(null, 80),
-                this.adjust_lightness(null, 90)
-            ];
+        darken_set: function(n){
+            var arr = [this];
+            var step = 100/ n;
+            for(var i=n-1;i>0;i--){
+                arr.push(this.adjust_lightness(null, -(step*i)))
+            }
+            return arr;
         },
-        darken5: function(){
-            return [
-                this,
-                this.adjust_lightness(null, -80),
-                this.adjust_lightness(null, -60),
-                this.adjust_lightness(null, -40),
-                this.adjust_lightness(null, -20)
-            ];
-        },
-        darken10: function(){
-            return [
-                this,
-                this.adjust_lightness(null, -90),
-                this.adjust_lightness(null, -80),
-                this.adjust_lightness(null, -70),
-                this.adjust_lightness(null, -60),
-                this.adjust_lightness(null, -50),
-                this.adjust_lightness(null, -40),
-                this.adjust_lightness(null, -30),
-                this.adjust_lightness(null, -20),
-                this.adjust_lightness(null, -10)
-            ];
-        },
-        complement5: function(){
+        complement_set: function(n){
             var base = this,
-                comp = this.complement();
-            return [
-                base,
-                this.subcolormix(base, comp, 75),
-                this.subcolormix(base, comp, 50),
-                this.subcolormix(base, comp, 25),
-                comp
-            ];
+                comp = this.complement(),
+                arr = [],
+                step = 100/ (n-1);
+
+            for(var i=n-1;i>=0;i--){
+                if(i==n-1){arr.push(base);
+                }else if(i==0){arr.push(comp);
+                }else{arr.push(this.subcolormix(base, comp, step*i))}
+            }
+            return arr;
         },
-        complement10: function(){
-            var base = this;
-            var comp = this.complement();
-            return [
-                base,
-                this.subcolormix(base, comp, 88.88),
-                this.subcolormix(base, comp, 77.77),
-                this.subcolormix(base, comp, 66.66),
-                this.subcolormix(base, comp, 55.55),
-                this.subcolormix(base, comp, 44.44),
-                this.subcolormix(base, comp, 33.33),
-                this.subcolormix(base, comp, 22.22),
-                this.subcolormix(base, comp, 11.11),
-                comp
-            ];
-        },
-        invert5: function(){
+        invert_set: function(n){
             var base = this,
                 inv = this.invert();
-            return [
-                base,
-                this.subcolormix(base, inv, 75),
-                this.subcolormix(base, inv, 50),
-                this.subcolormix(base, inv, 25),
-                inv
-            ];
+                arr = [],
+                step = 100/ (n-1);
+
+            for(var i=n-1;i>=0;i--){
+                if(i==n-1){arr.push(base);
+                }else if(i==0){arr.push(inv);
+                }else{arr.push(this.subcolormix(base, inv, step*i))}
+            }
+            return arr;
         },
-        invert10: function(){
-            var base = this,
-                inv = this.invert();
-            return [
-                base,
-                this.subcolormix(base, inv, 88.88),
-                this.subcolormix(base, inv, 77.77),
-                this.subcolormix(base, inv, 66.66),
-                this.subcolormix(base, inv, 55.55),
-                this.subcolormix(base, inv, 44.44),
-                this.subcolormix(base, inv, 33.33),
-                this.subcolormix(base, inv, 22.22),
-                this.subcolormix(base, inv, 11.11),
-                inv
-            ];
-        },
-        desaturate5: function(){
-            return [
-                this,
-                this.adjust_saturation(null, -75),
-                this.adjust_saturation(null, -50),
-                this.adjust_saturation(null, -25),
-                this.adjust_saturation(-100)
-            ];
+        desaturate_set: function(n){
+            var arr = [this];
+            var step = 100/ n;
+            for(var i=n-1;i>0;i--){
+                arr.push(this.adjust_saturation(null, -(step*i)))
+            }
+            return arr;
         }
     };
 
