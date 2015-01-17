@@ -28,7 +28,11 @@
                 console.log('%c '+bg+' ', guideCss);
                 console.log(c.command);
             });
-            return color.map(function(c){ return c.hex(); });
+            return {
+                hex: color.map(function(c){ return c.hex(); }),
+                rgba: color.map(function(c){ return c.rgba(); }),
+                hsl: color.map(function(c){ return c.hsl(); })
+            }
         }
 
         if(color.values){
