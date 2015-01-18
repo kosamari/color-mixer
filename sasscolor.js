@@ -15,7 +15,17 @@
     // color viewing helper for browser console
     c_c.print = function (color){
         var bg, fg, data;
-        if(typeof window === 'undefined'){ return; }
+        if(typeof window === 'undefined'){
+            if(Array.isArray(color)){
+                color.map(function(c){
+                    console.log(c.hex() +' : '+c.command)
+                })
+                return;
+            }else{
+                console.log(color.hex());
+                return color.hex();
+            }
+        }
 
         if(Array.isArray(color)){
             color.forEach(function(c){
