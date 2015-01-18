@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+    <svg width="720" height="120"></svg>
+    <script>
+    var enlarge;
+    var count = 0;
+    var svg = d3.select("svg")
+                .on("mousedown", function(){
+                    mousedown();
+                })
+                .on("mouseup",function(){mouseup()});
+
+    function mousedown(){
+        var circle = svg.append("circle");
+        circle.attr("cy", function(){return d3.event.pageY-5;});
+        circle.attr("cx", function(){return d3.event.pageX-5;});
+        circle.attr("r", 10);
+        r = 10
+        enlarge = setInterval(function(){
+            count++
+            circle.attr("r",function(){return r+count})
+        },50);
+    }
+
+    function mouseup(){
+        clearInterval(enlarge)
+        count = 0;
+    }
+
+    </script>
+</body>
+</html>
