@@ -11,15 +11,15 @@
     var enlarge;
     var count = 0;
     var svg = d3.select("svg")
-                .on("mousedown", function(){
+                .on("mousedown", function(e){
                     mousedown();
                 })
                 .on("mouseup",function(){mouseup()});
 
-    function mousedown(){
+    function mousedown(e){
         var input = document.getElementById('color-name').value
         var color = new c_c.Color({name:input})
-        var circle = svg.data([color]).append("circle");
+        var circle = svg.append("circle").data([color]);
         circle.attr("cy", function(){return d3.event.pageY-5;});
         circle.attr("cx", function(){return d3.event.pageX-5;});
         circle.attr("r", 10);
