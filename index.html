@@ -20,8 +20,8 @@
         var input = document.getElementById('color-name').value
         var color = new c_c.Color({name:input})
         var circle = svg.append("circle").data([color]);
-        circle.attr("cy", function(){return d3.event.pageY-5;});
-        circle.attr("cx", function(){return d3.event.pageX-5;});
+        circle.attr("cy", function(){return d3.event.pageY-30;});
+        circle.attr("cx", function(){return d3.event.pageX-10;});
         circle.attr("r", 10);
         circle.attr("fill",function(){return color.hex()});
         r = 10
