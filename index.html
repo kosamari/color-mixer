@@ -2,8 +2,10 @@
 <html>
 <head>
     <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="./sasscolor.js"></script>
 </head>
 <body>
+    <input type="text" name="" value="" placeholder="" id="color-name">
     <svg width="720" height="120"></svg>
     <script>
     var enlarge;
@@ -15,10 +17,13 @@
                 .on("mouseup",function(){mouseup()});
 
     function mousedown(){
-        var circle = svg.append("circle");
+        var input = document.getElementById('color-name').value
+        var color = new c_c.Color({name:input})
+        var circle = svg.data([color]).append("circle");
         circle.attr("cy", function(){return d3.event.pageY-5;});
         circle.attr("cx", function(){return d3.event.pageX-5;});
         circle.attr("r", 10);
+        circle.attr("fill",function(){return color.hex()});
         r = 10
         enlarge = setInterval(function(){
             count++
