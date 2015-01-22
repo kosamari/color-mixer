@@ -5,3 +5,4 @@ More front-end to come.
 
 TODO :
 - Add Lab color comversion
+- Click detection of object in UI
