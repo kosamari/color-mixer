@@ -46,10 +46,9 @@ mixed2.hex() // "#4c00b2"
 ```
 
 ### Create subcolors based on base color
+method names are comptible with color related Sass functions.
 ```JavaScript
 var red = new c_c.Color({hex:'#ff0000'})
-
-// method names are comptible with color related Sass functions.
 
 red.invert()   // same as inver($color) in Sass
 red.darken(50) // same as darken($color, 50%) in Sass
@@ -61,8 +60,6 @@ red.subcolors // => [SubColor, SubColor]
 ### Create subcolors set
 ```JavaScript
 var red = new c_c.Color({hex:'#ff0000'})
-
-// method names are comptible with color related Sass functions.
 
 red.desaturate_set(5)   // creates color chips including base color
                         // you can pass number of color chips to make
