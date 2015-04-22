@@ -1,0 +1,20 @@
+{
+  "name": "color-mixer",
+  "version": "1.0.0",
+  "description": "Manipulate colors like you write Sass. Mix some colors like you paint.",
+  "main": "colormixer.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kosamari/color-mixer.git"
+  },
+  "author": "Mariko Kosaka (http://kosamari.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kosamari/color-mixer/issues"
+  },
+  "homepage": "https://github.com/kosamari/color-mixer",
+  "keywords": [
+    "color",
+    "sass"
+  ]
+}
