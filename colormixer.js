@@ -1,7 +1,7 @@
 !function() {
     var c_c = {};
 
-    c_c.VERSION = '0.0.1';
+    c_c.VERSION = '1.0.0';
 
     if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {

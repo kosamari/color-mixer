@@ -7,6 +7,7 @@ This is made for quick prototyping to decide on color schemes.
 
 ## TL;DR;
 ![color-mixer](https://cloud.githubusercontent.com/assets/4581495/7272473/15a4020c-e8b9-11e4-851a-8546ff2c5536.png)
+![color_set](https://cloud.githubusercontent.com/assets/4581495/7272996/8ce8153e-e8bd-11e4-8c40-afc6189e501a.png)
 
 ## API Docs
 ``` (c_c) sorry, no documentation yet ```
